@@ -1,0 +1,76 @@
+<!--
+Created by Korkic
+Only available 'Korea'
+
+v0.1
+1. 카카오 맵 상 확인불가 는 빈칸 채움
+2. 처리시간을 고려해 sleep 함수 삽입
+-->
+
+<html>
+<head>
+  <title>위경도->주소 변환 v0.1</title>
+</head>
+
+<body>
+  <iframe src="http://apis.map.kakao.com/live/?type=sample_snippet&appkey=326e38503f420e1f0088dab1f46dc0c7" width="100%" height="60%" name="script_window"></iframe>
+  <br /><br />
+
+  <h3>사용방법</h3>
+  1. 상단의 <b>'HTML + JS'</b>와 <b>'Result'</b> 버튼을 누릅니다.<br /><br />
+  2. 좌측 <b>'HTML + JS'</b> 입력창에 아래 코드를 입력합니다.<br />
+  <style>
+    h6 {
+      margin: 5px;
+      border: 2px solid #cccccc;
+      padding: 5px;
+      background-color: #eeeeee;
+    }
+  </style>
+  <h6>&lt;script><br />
+  var geocoder = new kakao.maps.services.Geocoder();<br />
+
+  window.onload=function() {<br />
+    document.getElementById("convert").onclick=processText;<br />
+  }<br />
+
+  function sleep (delay) {<br />
+    var start = new Date().getTime();<br />
+    while (new Date().getTime() < start + delay);<br />
+  }<br />
+
+  function processText() {<br />
+    var txtBox = document.getElementById("input_latlong");<br />
+    var lines = txtBox.value.split("\n");<br />
+
+    var output_pathString = "";<br />
+    for (var i = 0; i < lines.length-1; i++) {<br />
+      var location = lines[i].split("\t");<br />
+      var coord = new kakao.maps.LatLng(location[0], location[1]);<br />
+      var callback = function(result, status) {<br />
+        sleep(60);<br />
+        if (status === kakao.maps.services.Status.OK) {<br />
+          document.getElementById("output_path").value += result[0].address.address_name;<br />
+        }<br />
+        document.getElementById("output_path").value += "\n";<br />
+      };<br />
+      sleep(60);<br />
+      geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);<br />
+      sleep(60);<br />
+    }<br />
+  }<br />
+  &lt;/script><br />
+
+  &lt;body><br />
+  &lt;textarea id="input_latlong" style="width:100%; height:30%" placeholder = "좌표를 입력하세요.<br />
+                                                                                예시:위도[tab]경도<br />
+                                                                                35.2340596 128.660175">&lt;/textarea>&lt;br /><br />
+  &lt;button id="convert">변환&lt;/button>&lt;br />&lt;br /><br />
+  &lt;textarea id="output_path" style="width:100%; height:30%" placeholder = "이곳에 주소가 나옵니다.">&lt;/textarea><br />
+  &lt;/body><br />
+  </h6><br />
+  3. 우측 <b>'Result'</b> 창의 상단 입력창에 형식에 맞춰 좌표를 입력 후 <b>변환</b> 버튼을 누릅니다.<br /><br />
+  ※ 요청 위경도 갯수에 따라 결과표시까지 시간이 길어질 수 있습니다.<br />
+  ※ 카카오 맵 DB 상 좌표에 해당하는 주소명이 없는 경우가 있습니다.
+</body>
+</html>
